@@ -76,7 +76,7 @@ export function App() {
               rounded-xl object-cover
               transition-all duration-300 ease-in-out
               hover:scale-105 hover:border-5 hover:border-[#C4A052]
-              cursor-pointer
+              cursor-pointer overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar
             "
           />
         );
