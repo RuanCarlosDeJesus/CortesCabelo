@@ -4,9 +4,6 @@ import cortesData from ".././cortesData.json";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-
-
 interface Corte {
   id: number;
   nome: string;
@@ -79,7 +76,7 @@ export function App() {
               rounded-xl object-cover
               transition-all duration-300 ease-in-out
               hover:scale-105 hover:border-5 hover:border-[#C4A052]
-              cursor-pointer overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar
+              cursor-pointer
             "
           />
         );
