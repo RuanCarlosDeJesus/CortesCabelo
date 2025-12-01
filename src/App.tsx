@@ -4,6 +4,9 @@ import cortesData from ".././cortesData.json";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
+
+
 interface Corte {
   id: number;
   nome: string;
