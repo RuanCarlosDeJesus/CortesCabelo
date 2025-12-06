@@ -2,8 +2,8 @@ import LogoBlack from "../public/logoBlack.png";
 
 import cortesData from ".././cortesData.json";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+//import { useNavigate } from "react-router-dom";
+import ModalRegister from "../src/components/modaRegister"
 interface Corte {
   id: number;
   nome: string;
@@ -19,15 +19,21 @@ export function App() {
   const prev = () =>
     setIndex((prev) => (prev - 1 + cortes.length) % cortes.length);
 
-  const navigate = useNavigate();
+  
+  const [modalOpen, setModalOpen] = useState(false);
+
+
+ 
+
+  
   return (
     <div className=" h-screen w-full flex flex-col items-center p-2  text-white">
       <header className="w-[70%] flex flex-col  justify-center items-center py-8 gap-4">
-        <img
+        <a href="/" className="w-full md:w-[50%]"><img
           src={LogoBlack}
           alt="Logo"
-          className="w-full md:w-[50%] "
-        />
+          className=" "
+        /></a>
 
         <div className="w-full md:w-[40%] text-center md:text-left order-2 md:order-1">
           <h2 className="text-4xl sm:text-5xl font-bold py-1.5 mb-3 font-cormorant">
@@ -37,13 +43,13 @@ export function App() {
           <p className="text-lg sm:text-2xl font-playfair mb-6">
             Cortes modernos, clássicos e sob medida para você.
           </p>
+    
+         
+<button onClick={() => setModalOpen(true)}  className="bg-black text-white border border-[#d4af37] text-xl px-6 py-2 font-playfair rounded-xl font-bold hover:bg-[#d4af37] hover:text-black transition-all duration-300 cursor-pointer">
+  Agende seu horário
+</button>
 
-          <button
-            className="bg-black text-white border border-[#d4af37] text-xl px-6 py-2 font-playfair rounded-xl font-bold hover:bg-[#d4af37] hover:text-black transition-all duration-300 cursor-pointer"
-            onClick={() => navigate("/login")}
-          >
-            Saíba mais!
-          </button>
+{modalOpen && <ModalRegister close={() => setModalOpen(false)} />}
         </div>
       </header>
 
@@ -98,31 +104,33 @@ export function App() {
 
       <section className="w-full flex flex-col items-center px-6 py-14">
 
-  {/* Título Contatos */}
+  
   <h3 className="text-4xl sm:text-5xl font-bold font-cormorant mb-4 text-center">
     Contatos
   </h3>
 
-  {/* Lista */}
+
   <ul className="text-center sm:text-left text-2xl md:text-3xl flex flex-col gap-3 mb-10">
     <li className="flex items-center gap-3 justify-center sm:justify-start">
-      <span>Instagram:</span>
+      <span>Instagram: </span>
       <i className="bi bi-instagram text-pink-600 text-3xl"></i>
     </li>
     <li className="flex items-center gap-3 justify-center sm:justify-start">
-      <span>Whatsapp:</span>
+      <span>Whatsapp: 21 99100-5960</span>
       <i className="bi bi-whatsapp text-green-500 text-3xl"></i>
     </li>
   </ul>
-
-  {/* Localização */}
+<div>
+  
+</div>
+ 
   <div className="flex flex-col items-center w-full max-w-4xl gap-4">
     <h3 className="text-4xl sm:text-5xl font-bold font-cormorant text-center">
       Localização
     </h3>
 
     <p className="text-xl sm:text-2xl text-center">
-      Av. Chrisóstomo Pimentel de Oliveira, 1110 - Pavuna
+      Av. Chrisóstomo Pimentel de Oliveira, 1100 - Pavuna
     </p>
 
     <iframe
