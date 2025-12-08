@@ -22,11 +22,10 @@ export const ModalRegister = ({ close }: { close: () => void }) => {
 
   return (
     <>
-      {/* MODAL */}
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4 z-40">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center p-4 z-40">
         <div className="w-full max-w-md bg-black rounded-2xl border border-[#d4af37] p-6 flex flex-col gap-6">
 
-          {/* BOTÃO FECHAR */}
+        
           <button onClick={close} className="justify-end flex items-center h-8">
             <i className="bi bi-x text-3xl text-white border-2 border-red-500 rounded-xl cursor-pointer"></i>
           </button>
@@ -65,7 +64,7 @@ export const ModalRegister = ({ close }: { close: () => void }) => {
             </button>
           </div>
 
-          {/* BOTÃO CONFIRMAR */}
+      
           <button
             onClick={handleConfirm}
             className="w-full h-12 rounded-xl bg-black border border-yellow-600/60 text-yellow-500 font-semibold hover:bg-yellow-600 hover:text-black transition"
@@ -76,7 +75,7 @@ export const ModalRegister = ({ close }: { close: () => void }) => {
         </div>
       </div>
 
-      {/* ABA DE HORÁRIOS */}
+
       {showHorarios && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50">
           <div className="w-full max-w-md bg-black rounded-2xl border border-yellow-600 p-6 flex flex-col gap-4">
@@ -107,7 +106,7 @@ export const ModalRegister = ({ close }: { close: () => void }) => {
         </div>
       )}
 
-      {/* ALERTA */}
+ 
       {showMensagem && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center z-50">
           <div className="bg-black border border-yellow-500 rounded-xl p-6 w-80 text-center">

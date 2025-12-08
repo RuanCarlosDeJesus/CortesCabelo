@@ -144,7 +144,7 @@ export function App() {
 </section>
 
 
-      <footer></footer>
+      <footer >@TH&Dutra</footer>
     </div>
   );
 }
