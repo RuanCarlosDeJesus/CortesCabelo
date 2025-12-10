@@ -1,4 +1,4 @@
-// src/pages/Home.tsx
+
 import { useEffect, useState } from "react";
 import { db } from "../services/firebaseConnect";
 import { doc, setDoc, onSnapshot, collection } from "firebase/firestore";
@@ -11,10 +11,10 @@ export function Home() {
   const [tempPhone, setTempPhone] = useState("");
   const [names, setNames] = useState<{ [hour: string]: any }>({});
 
-  // horários iguais ao ModalRegister:
+ 
   const hoursList = [
     "09:00", "10:00", "11:00", "13:00",
-    "14:00", "15:00", "16:00", "17:00"
+    "14:00", "15:00", "16:00","17:00", "18:00", "19:00", "20:00", "21:00"
   ];
 
   const todayKey = new Date().toISOString().split("T")[0];
@@ -29,7 +29,7 @@ export function Home() {
     setDays(dList);
   }, []);
 
-  // leitura do firebase ✔ CORRIGIDO
+
   useEffect(() => {
     const ref = collection(db, "agendamentos", todayKey, "horarios");
 
@@ -52,7 +52,7 @@ export function Home() {
     return () => unsub();
   }, []);
 
-  // abrir modal admin ✔ CORRIGIDO
+ 
   function openModal(hour: string) {
     setSelectedHour(hour);
 
@@ -70,7 +70,7 @@ export function Home() {
     setModalOpen(true);
   }
 
-  // salvar no firebase
+ 
   async function handleSave() {
     if (!selectedHour) return;
 
@@ -127,7 +127,6 @@ export function Home() {
         </table>
       </main>
 
-      {/* Modal Admin */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4">
           <div className="bg-white text-black rounded-xl p-6 w-[90%] max-w-md shadow-xl">

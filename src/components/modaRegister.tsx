@@ -1,11 +1,13 @@
 // src/components/ModalRegister.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { db } from "../services/firebaseConnect";
 import {
   doc,
   setDoc,
-  getDoc,
+ 
   serverTimestamp,
+  collection,
+  getDocs,
 } from "firebase/firestore";
 
 interface Props {
@@ -18,6 +20,7 @@ export default function ModalRegister({ close }: Props) {
   const [tel, setTel] = useState("");
   const [showHorarios, setShowHorarios] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [horariosOcupados, setHorariosOcupados] = useState<string[]>([]);
 
   const hours = [
     "09:00",
@@ -28,9 +31,32 @@ export default function ModalRegister({ close }: Props) {
     "15:00",
     "16:00",
     "17:00",
+    "18:00",
+    "19:00",
+    "20:00",
+    "21:00",
   ];
 
   const todayKey = new Date().toISOString().split("T")[0];
+
+  // ✅ CARREGA HORÁRIOS OCUPADOS
+  useEffect(() => {
+    async function load() {
+      const colRef = collection(db, "agendamentos", todayKey, "horarios");
+      const snap = await getDocs(colRef);
+
+      const ocupados: string[] = [];
+      snap.forEach((doc) => {
+        const data = doc.data();
+        if (data.nome && data.nome !== "Disponível") {
+          ocupados.push(doc.id);
+        }
+      });
+
+      setHorariosOcupados(ocupados);
+    }
+    load();
+  }, []);
 
   function validatePhone(phone: string) {
     const digits = phone.replace(/\D/g, "");
@@ -48,28 +74,15 @@ export default function ModalRegister({ close }: Props) {
       return;
     }
 
+    if (horariosOcupados.includes(horario)) {
+      alert("Este horário já está preenchido!");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const ref = doc(db, "agendamentos", todayKey, "horarios", horario);
-
-      const snap = await getDoc(ref);
-
-      if (snap.exists()) {
-        const data = snap.data();
-
-        if (data && data.nome && data.nome !== "Disponível") {
-          const existing = `${data.nome}${data.phone ? " - " + data.phone : ""}`;
-          const ok = confirm(
-            `Este horário já está preenchido:\n${existing}\n\nDeseja substituir?`
-          );
-
-          if (!ok) {
-            setLoading(false);
-            return;
-          }
-        }
-      }
 
       await setDoc(ref, {
         nome: nome.trim(),
@@ -83,7 +96,6 @@ export default function ModalRegister({ close }: Props) {
       setNome("");
       setTel("");
       setHorario("");
-
     } catch (err) {
       console.error("Erro ao salvar:", err);
       alert("Erro ao salvar. Verifique sua conexão e tente novamente.");
@@ -147,6 +159,7 @@ export default function ModalRegister({ close }: Props) {
         </div>
       </div>
 
+      {/* LISTA DE HORÁRIOS */}
       {showHorarios && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50">
           <div className="w-full max-w-md bg-black rounded-2xl border border-yellow-600 p-6 flex flex-col gap-4">
@@ -155,18 +168,30 @@ export default function ModalRegister({ close }: Props) {
             </h2>
 
             <div className="grid grid-cols-3 gap-3">
-              {hours.map((h) => (
-                <button
-                  key={h}
-                  onClick={() => {
-                    setHorario(h);
-                    setShowHorarios(false);
-                  }}
-                  className="bg-green-600/40 border border-green-500 text-green-300 rounded-lg py-2 hover:bg-green-600 transition"
-                >
-                  {h}
-                </button>
-              ))}
+              {hours.map((h) => {
+                const ocupado = horariosOcupados.includes(h);
+
+                return (
+                  <button
+                    key={h}
+                    onClick={() => {
+                      if (!ocupado) {
+                        setHorario(h);
+                        setShowHorarios(false);
+                      }
+                    }}
+                    disabled={ocupado}
+                    className={`rounded-lg py-2 transition border
+                      ${
+                        ocupado
+                          ? "bg-red-700 border-red-500 text-red-300 cursor-not-allowed"
+                          : "bg-green-600/40 border-green-500 text-green-300 hover:bg-green-600"
+                      }`}
+                  >
+                    {h}
+                  </button>
+                );
+              })}
             </div>
 
             <button
