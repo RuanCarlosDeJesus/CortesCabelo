@@ -2,7 +2,7 @@ import LogoBlack from "../public/logoBlack.png";
 
 import cortesData from ".././cortesData.json";
 import { useState } from "react";
-//import { useNavigate } from "react-router-dom";
+
 import ModalRegister from "../src/components/modaRegister"
 interface Corte {
   id: number;

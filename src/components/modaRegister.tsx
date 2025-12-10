@@ -1,4 +1,4 @@
-// src/components/ModalRegister.tsx
+
 import { useEffect, useState } from "react";
 import { db } from "../services/firebaseConnect";
 import {
@@ -39,7 +39,7 @@ export default function ModalRegister({ close }: Props) {
 
   const todayKey = new Date().toISOString().split("T")[0];
 
-  // ✅ CARREGA HORÁRIOS OCUPADOS
+
   useEffect(() => {
     async function load() {
       const colRef = collection(db, "agendamentos", todayKey, "horarios");
@@ -159,7 +159,6 @@ export default function ModalRegister({ close }: Props) {
         </div>
       </div>
 
-      {/* LISTA DE HORÁRIOS */}
       {showHorarios && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50">
           <div className="w-full max-w-md bg-black rounded-2xl border border-yellow-600 p-6 flex flex-col gap-4">

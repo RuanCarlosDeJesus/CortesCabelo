@@ -12,7 +12,7 @@ const firebaseConfig = {
   measurementId: "G-15V6TGSQWZ"
 };
 
-// ⚠️ IMPORTANTE: Impede inicialização duplicada
+
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 
 const auth = getAuth(app);
