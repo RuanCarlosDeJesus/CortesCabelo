@@ -1,8 +1,7 @@
-
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+
 const firebaseConfig = {
   apiKey: "AIzaSyC5mLwcyfMJ4mbXtPj92ykaJF8PIyQlxQo",
   authDomain: "dbcortes.firebaseapp.com",
@@ -13,14 +12,10 @@ const firebaseConfig = {
   measurementId: "G-15V6TGSQWZ"
 };
 
+// ⚠️ IMPORTANTE: Impede inicialização duplicada
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 
-
-// Initialize Firebase
-
-const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app); 
-const analytics = getAnalytics(app);
+const db = getFirestore(app);
 
-
-export { auth, db, analytics };
+export { auth, db };
