@@ -1,7 +1,8 @@
 import LogoBlack from "../public/logoBlack.png";
 
 import cortesData from ".././cortesData.json";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 
 import ModalRegister from "../src/components/modaRegister"
 interface Corte {
@@ -15,9 +16,23 @@ const cortes: Corte[] = cortesData;
 
 export function App() {
   const [index, setIndex] = useState(0);
-  const next = () => setIndex((prev) => (prev + 1) % cortes.length);
-  const prev = () =>
-    setIndex((prev) => (prev - 1 + cortes.length) % cortes.length);
+
+ useEffect(() => {
+  const timer = setTimeout(() => {
+    const nextIndex = (index + 1) % cortes.length;
+    setIndex(nextIndex);
+  }, 1000);
+
+  return () => clearTimeout(timer);
+}, [index]);
+
+  
+const next = () => {
+  setIndex((prevIndex) => (prevIndex + 1) % cortes.length);
+}; const prev = () => {
+  setIndex((prevIndex) => (prevIndex - 1 + cortes.length) % cortes.length);
+}
+
 
   
   const [modalOpen, setModalOpen] = useState(false);
@@ -49,7 +64,13 @@ export function App() {
   Agende seu horário
 </button>
 
-{modalOpen && <ModalRegister close={() => setModalOpen(false)} />}
+{modalOpen && (
+  <ModalRegister
+    close={() => setModalOpen(false)}
+    onSave={() => {}}
+  />
+)}
+
         </div>
       </header>
 
@@ -67,34 +88,35 @@ export function App() {
       className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white px-4 py-2 rounded-full cursor-pointer z-20"
     >
       <i className="bi bi-arrow-left"></i>
-    </button>
+    </button> 
+<div className="flex gap-8 overflow-hidden py-4 relative">
+  {[0, 1, 2].map((i) => {
+    const pos = (index + i) % cortes.length;
 
-    <div className="flex gap-8 overflow-hidden py-4">
-      {[0, 1, 2].map((i) => {
-        const pos = (index + i) % cortes.length;
-        return (
-          <img
-            key={pos}
-            src={cortes[pos].caminhoArquivo}
-            alt={cortes[pos].nome}
-            className="
-              w-[300px] h-[300px]
-              rounded-xl object-cover
-              transition-all duration-300 ease-in-out
-              hover:scale-105 hover:border-5 hover:border-[#C4A052]
-              cursor-pointer
-            "
-          />
-        );
-      })}
-    </div>
+    return (
+      <img
+  key={pos}
+  src={cortes[pos].caminhoArquivo}
+  alt={cortes[pos].nome}
+  className={`
+    w-[300px] h-[300px]
+    rounded-xl object-cover
+    cursor-pointer
+    ${i === 0 ? "opacity-100" : "opacity-0 md:opacity-100"}
+  `}
+/>
 
-    <button
+    );
+  })}
+</div>
+
+
+     <button
       onClick={next}
       className="absolute right-0.5 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white px-4 py-2 rounded-full cursor-pointer z-20"
     >
       <i className="bi bi-arrow-right"></i>
-    </button>
+    </button> 
 
   </div>
 </section>
