@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { db } from "../services/firebaseConnect";
 import { doc, onSnapshot, collection, deleteDoc } from "firebase/firestore";
 import ModalRegister from "../components/modaRegister";
-
+import HeaderNavigate from "../components/headerNavigate";
 export function Home() {
   const [profile, setProfile] = useState<"caua" | "Thiago">("caua");
   const [days, setDays] = useState<string[]>([]);
@@ -54,8 +54,9 @@ export function Home() {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center bg-[#0f0f0f] text-white p-4 sm:p-10">
-
+           <HeaderNavigate />
       <div className="mb-6 flex gap-4">
+        
         <div
           className={`px-4 py-2 rounded-xl font-semibold cursor-pointer text-sm sm:text-base ${profile==="caua"?"bg-yellow-500 text-black":"bg-white/20"}`}
           onClick={()=>setProfile("caua")}

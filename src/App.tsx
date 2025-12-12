@@ -124,24 +124,33 @@ const next = () => {
       </main>
 
 
-      <section className="w-full flex flex-col items-center px-6 py-14">
+      <section className="w-full flex flex-col items-start px-6 py-14 md:items-center ">
 
   
   <h3 className="text-4xl sm:text-5xl font-bold font-cormorant mb-4 text-center">
     Contatos
   </h3>
+  <div className="flex flex-col gap-2 mb-8 text-lg sm:text-xl font-playfair items-start ">
+    <h2 className="text-[25px]">Cauã</h2>
 
+      <span>Instagram: <i className="bi bi-instagram text-pink-600 text-3xl"></i> </span> 
+          <span>Whatsapp: 21 99100-5960 <i className="bi bi-whatsapp text-green-500 text-3xl"></i></span> 
+               
+               
+  </div>
 
-  <ul className="text-center sm:text-left text-2xl md:text-3xl flex flex-col gap-3 mb-10">
-    <li className="flex items-center gap-3 justify-center sm:justify-start">
-      <span>Instagram: </span>
-      <i className="bi bi-instagram text-pink-600 text-3xl"></i>
-    </li>
-    <li className="flex items-center gap-3 justify-center sm:justify-start">
-      <span>Whatsapp: 21 99100-5960</span>
-      <i className="bi bi-whatsapp text-green-500 text-3xl"></i>
-    </li>
-  </ul>
+  <div className="flex flex-col gap-2  text-lg sm:text-xl font-playfair  mb-30">
+    <h2 className="text-[25px]">Thiago</h2>
+
+      <span>Instagram: <i className="bi bi-instagram text-pink-600 text-3xl"></i> </span> 
+          <span>Whatsapp:  21 98637-3354 <i className="bi bi-whatsapp text-green-500 text-3xl"></i></span> 
+               
+               
+  </div>
+   
+
+  
+  
 <div>
   
 </div>

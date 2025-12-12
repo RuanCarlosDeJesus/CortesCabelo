@@ -19,7 +19,7 @@ export function Private({ children }: PrivateProps) {
           uid: user.uid,
           email: user.email,
         };
-        localStorage.setItem("mylinks", JSON.stringify(userData));
+        localStorage.setItem("DbCortes", JSON.stringify(userData));
         setLoading(false);
         setSigned(true);
       } else {
