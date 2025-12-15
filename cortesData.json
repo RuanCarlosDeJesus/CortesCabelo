@@ -2,43 +2,38 @@
   {
     "id": 1,
     "nome": "Razor Fade Clássico",
-    "preco": 45,
+   
     "caminhoArquivo": "/Corte1.webp"
   },
   {
     "id": 2,
     "nome": "Crespo Moderno",
-    "preco": 50,
+   
     "caminhoArquivo": "/corte2.jpeg"
   },
   {
     "id": 3,
-    "nome": "Barba Lenhador",
-    "preco": 30,
+    "nome": "Corte Classico",
+   
     "caminhoArquivo": "/corte3.webp"
   },
    {
     "id": 4,
-    "nome": "Barba Lenhador",
-    "preco": 30,
-    "caminhoArquivo": "/corte3.webp"
+    "nome": "Americano",
+   
+    "caminhoArquivo": "/cortes4.jpg"
   },
     {
     "id": 5,
-    "nome": "Barba Lenhador",
-    "preco": 30,
-    "caminhoArquivo": "/corte3.webp"
-  },
-   {
-    "id": 6,
-    "nome": "Razor Fade Clássico",
-    "preco": 45,
-    "caminhoArquivo": "/Corte1.webp"
-  },
-  {
-    "id": 7,
-    "nome": "Crespo Moderno",
-    "preco": 50,
-    "caminhoArquivo": "/corte2.jpeg"
+    "nome": "Corte Com Freestyle",
+  
+    "caminhoArquivo": "/cortes5.jpg"
+  },{
+   
+    "id":6,
+    "nome":"Corte Jaca",
+    "caminhoArquivo":"/cortes6.webp"
+
+
   }
 ]

@@ -4,7 +4,7 @@ import Home from '../src/Home/home'
 import { Error } from "../src/error/error";
 import { Private } from './private';
 import { Clientes } from "../src/Home/clientes";
-import { Historico } from "../src/Home/historico";
+
 import { createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -26,10 +26,6 @@ const router = createBrowserRouter([
 path:"/clientes",
 element:<Private><Clientes /></Private>,
 
-  },
-  {
-path:"/historico",
-element:<Private><Historico /></Private>,
   },
 
    {
