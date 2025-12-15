@@ -8,7 +8,7 @@ import ModalRegister from "../src/components/modaRegister"
 interface Corte {
   id: number;
   nome: string;
-  preco: number;
+ 
   caminhoArquivo: string;
 }
 
