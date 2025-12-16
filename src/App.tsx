@@ -117,7 +117,7 @@ export function App() {
   </h3>
 
   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
-    {/* Card 1 */}
+    
     <div className="border border-[#d4af37] rounded-2xl p-6 bg-[#0f0f0f] shadow-lg">
       <h2 className="text-2xl font-semibold mb-4 text-[#d4af37]">
         Cauã
@@ -144,7 +144,7 @@ export function App() {
       </div>
     </div>
 
-    {/* Card 2 */}
+    
     <div className="border border-[#d4af37] rounded-2xl p-6 bg-[#0f0f0f] shadow-lg">
       <h2 className="text-2xl font-semibold mb-4 text-[#d4af37]">
         Thiago
