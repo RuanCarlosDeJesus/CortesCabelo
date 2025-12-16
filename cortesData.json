@@ -29,11 +29,6 @@
   
     "caminhoArquivo": "/cortes5.jpg"
   },{
-   
-    "id":6,
-    "nome":"Corte Jaca",
-    "caminhoArquivo":"/cortes6.webp"
-  },{
     "id":7,
     "nome":"nevou",
     "caminhoArquivo":"/cortes7.jpg"
