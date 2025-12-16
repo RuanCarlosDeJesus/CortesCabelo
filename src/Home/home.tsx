@@ -1,3 +1,5 @@
+
+
 import { useEffect, useState } from "react";
 import { db } from "../services/firebaseConnect";
 import {
@@ -7,150 +9,147 @@ import {
   onSnapshot,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import ModalRegister from "../components/modaRegister";
-import HeaderNavigate from "../components/headerNavigate";
+
+
+type Cliente = {
+  id: string;
+  nome: string;
+  phone: string;
+  criadoEm: any;
+  ordem: number;
+};
 
 export function Home() {
-  const [profile, setProfile] = useState<"caua" | "Thiago">("caua");
   const [modalOpen, setModalOpen] = useState(false);
-  const [names, setNames] = useState<{ [key: number]: string }>({});
-
+  const [clientes, setClientes] = useState<Cliente[]>([]);
   const queueSize = 12;
 
   useEffect(() => {
-    const q = query(
-      collection(db, "profissionais", profile, "fila"),
-      orderBy("criadoEm", "asc")
-    );
+    const q = query(collection(db, "fila"), orderBy("ordem", "asc"));
 
     const unsub = onSnapshot(q, snap => {
-      const updated: { [key: number]: string } = {};
+      const lista: Cliente[] = snap.docs.map(d => ({
+        id: d.id,
+        ...(d.data() as Omit<Cliente, "id">),
+      }));
 
-      for (let i = 1; i <= queueSize; i++) {
-        updated[i] = "Disponível";
-      }
-
-      snap.docs.forEach((docSnap, index) => {
-        if (index < queueSize) {
-          const data = docSnap.data();
-          updated[index + 1] = data.phone
-            ? `${data.nome} - ${data.phone}`
-            : data.nome;
-        }
-      });
-
-      setNames(updated);
+      setClientes(lista);
     });
 
     return unsub;
-  }, [profile]);
+  }, []);
 
-  async function handleDelete(position: number) {
-    const q = query(
-      collection(db, "profissionais", profile, "fila"),
-      orderBy("criadoEm", "asc")
-    );
+  async function handleDelete(index: number) {
+    const cliente = clientes[index];
+    if (!cliente) return;
 
-    const snap = await new Promise<any>(resolve =>
-      onSnapshot(q, s => resolve(s))
-    );
+    await deleteDoc(doc(db, "fila", cliente.id));
+  }
 
-    const docToDelete = snap.docs[position - 1];
-    if (!docToDelete) return;
+  async function onDragEnd(result: any) {
+    if (!result.destination) return;
 
-    await deleteDoc(
-      doc(db, "profissionais", profile, "fila", docToDelete.id)
+    const items = Array.from(clientes);
+    const [moved] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, moved);
+
+    setClientes(items);
+
+   
+    await Promise.all(
+      items.map((c, index) =>
+        updateDoc(doc(db, "fila", c.id), {
+          ordem: index + 1,
+        })
+      )
     );
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center bg-[#0f0f0f] text-white p-4 sm:p-10">
-      <HeaderNavigate />
-
-      <div className="mb-6 flex gap-4">
-        <div
-          onClick={() => setProfile("caua")}
-          className={`px-4 py-2 rounded-xl font-semibold cursor-pointer ${
-            profile === "caua"
-              ? "bg-yellow-500 text-black"
-              : "bg-white/20"
-          }`}
-        >
-          Cauã
-        </div>
-
-        <div
-          onClick={() => setProfile("Thiago")}
-          className={`px-4 py-2 rounded-xl font-semibold cursor-pointer ${
-            profile === "Thiago"
-              ? "bg-yellow-500 text-black"
-              : "bg-white/20"
-          }`}
-        >
-          Thiago
-        </div>
-      </div>
-
-      <header className="w-full max-w-4xl text-center mb-10">
-        <h2 className="text-2xl sm:text-4xl font-semibold">
-          Painel Administrativo – {profile === "caua" ? "Cauã" : "Thiago"}
-        </h2>
+    <div className="min-h-screen bg-[#0f0f0f] text-white p-6 flex flex-col items-center">
+      
+      <header className="flex gap-6 md:gap-10 mt-5 border-amber-300 border p-4 md:p-5 rounded-xl w-full md:w-[10%] items-center justify-center font-bold text-base sm:text-lg md:text-2xl">
+        <h1> Área de Edição do Admin!</h1>
       </header>
 
-      <main className="w-full max-w-3xl bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-2xl">
-        <table className="w-full text-sm sm:text-lg">
-          <thead>
-            <tr className="bg-white/10">
-              <th className="p-4 text-left">Ordem</th>
-              <th className="p-4 text-left">Cliente</th>
-              <th className="p-4 text-left">Remover</th>
-            </tr>
-          </thead>
+      <h2 className="text-3xl font-semibold my-6">Fila Única (Admin)</h2>
 
-          <tbody>
-            {Array.from({ length: queueSize }, (_, i) => {
-              const pos = i + 1;
-              const status = names[pos];
+      <main className="w-full max-w-3xl bg-white/10 p-6 rounded-xl">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="fila">
+            {provided => (
+              <table
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="w-full"
+              >
+                <thead>
+                  <tr>
+                    <th className="text-left p-3">Ordem</th>
+                    <th className="text-left p-3">Cliente</th>
+                    <th className="p-3">Remover</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Array.from({ length: queueSize }).map((_, i) => {
+                    const cliente = clientes[i];
 
-              return (
-                <tr key={pos} className="hover:bg-white/5">
-                  <td className="p-4 font-semibold text-yellow-400">
-                    {pos}
-                  </td>
+                    if (!cliente) {
+                      return (
+                        <tr key={i}>
+                          <td className="p-3 text-yellow-400">{i + 1}</td>
+                          <td className="p-3 text-green-400">Disponível</td>
+                          <td className="p-3"></td>
+                        </tr>
+                      );
+                    }
 
-                  <td
-                    className={`p-4 ${
-                      status === "Disponível"
-                        ? "text-green-400"
-                        : "text-red-400 font-semibold"
-                    }`}
-                  >
-                    {status}
-                  </td>
-
-                  <td className="p-4">
-                    {status !== "Disponível" && (
-                      <button
-                        onClick={() => handleDelete(pos)}
-                        className="bg-red-600 px-3 py-1 rounded"
+                    return (
+                      <Draggable
+                        draggableId={cliente.id}
+                        index={i}
+                        key={cliente.id}
                       >
-                        Remover
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                        {provided => (
+                          <tr
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <td className="p-3 text-yellow-400">{i + 1}</td>
+                            <td className="p-3 text-red-400">
+                              {cliente.nome} - {cliente.phone}
+                            </td>
+                            <td className="p-3">
+                              <button
+                                onClick={() => handleDelete(i)}
+                                className="bg-red-600 px-3 py-1 rounded"
+                              >
+                                Remover
+                              </button>
+                            </td>
+                          </tr>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                  {provided.placeholder}
+                </tbody>
+              </table>
+            )}
+          </Droppable>
+        </DragDropContext>
       </main>
 
       <button
         onClick={() => setModalOpen(true)}
-        className="mt-6 px-6 py-3 rounded-xl bg-blue-500 font-semibold hover:bg-yellow-600"
+        className="mt-6 px-6 py-3 rounded-xl bg-blue-500 hover:bg-yellow-600"
       >
-        Editar Cliente
+        Adicionar Cliente
       </button>
 
       {modalOpen && (

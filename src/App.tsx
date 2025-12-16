@@ -3,12 +3,12 @@ import LogoBlack from "../public/logoBlack.png";
 import cortesData from ".././cortesData.json";
 import { useEffect, useState } from "react";
 
-
-import ModalRegister from "../src/components/modaRegister"
+import ModalRegister from "../src/components/modaRegister";
+import Clientes from "./Home/clientes";
 interface Corte {
   id: number;
   nome: string;
- 
+
   caminhoArquivo: string;
 }
 
@@ -17,38 +17,30 @@ const cortes: Corte[] = cortesData;
 export function App() {
   const [index, setIndex] = useState(0);
 
- useEffect(() => {
-  const timer = setTimeout(() => {
-    const nextIndex = (index + 1) % cortes.length;
-    setIndex(nextIndex);
-  }, 1000);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const nextIndex = (index + 1) % cortes.length;
+      setIndex(nextIndex);
+    }, 1000);
 
-  return () => clearTimeout(timer);
-}, [index]);
+    return () => clearTimeout(timer);
+  }, [index]);
 
-  
-const next = () => {
-  setIndex((prevIndex) => (prevIndex + 1) % cortes.length);
-}; const prev = () => {
-  setIndex((prevIndex) => (prevIndex - 1 + cortes.length) % cortes.length);
-}
+  const next = () => {
+    setIndex((prevIndex) => (prevIndex + 1) % cortes.length);
+  };
+  const prev = () => {
+    setIndex((prevIndex) => (prevIndex - 1 + cortes.length) % cortes.length);
+  };
 
-
-  
   const [modalOpen, setModalOpen] = useState(false);
 
-
- 
-
-  
   return (
     <div className=" h-screen w-full flex flex-col items-center p-2  text-white">
       <header className="w-[70%] flex flex-col  justify-center items-center py-8 gap-4">
-        <a href="/" className="w-full md:w-[50%]"><img
-          src={LogoBlack}
-          alt="Logo"
-          className=" "
-        /></a>
+        <a href="/" className="w-full md:w-[50%]">
+          <img src={LogoBlack} alt="Logo" className=" " />
+        </a>
 
         <div className="w-full md:w-[40%] text-center md:text-left order-2 md:order-1">
           <h2 className="text-4xl sm:text-5xl font-bold py-1.5 mb-3 font-cormorant">
@@ -58,124 +50,134 @@ const next = () => {
           <p className="text-lg sm:text-2xl font-playfair mb-6">
             Cortes modernos, clássicos e sob medida para você.
           </p>
-    
-         
-<button onClick={() => setModalOpen(true)}  className="bg-black text-white border border-[#d4af37] text-xl px-6 py-2 font-playfair rounded-xl font-bold hover:bg-[#d4af37] hover:text-black transition-all duration-300 cursor-pointer">
-  Agende seu horário
-</button>
 
-{modalOpen && (
-  <ModalRegister
-    close={() => setModalOpen(false)}
-    onSave={() => {}}
-  />
-)}
+          <Clientes />
+          <button
+            onClick={() => setModalOpen(true)}
+            className="bg-black text-white border border-[#d4af37] text-xl px-6 py-2 font-playfair rounded-xl font-bold hover:bg-[#d4af37] hover:text-black transition-all duration-300 cursor-pointer"
+          >
+            Agende seu horário
+          </button>
 
+          {modalOpen && (
+            <ModalRegister
+              close={() => setModalOpen(false)}
+              onSave={() => {}}
+            />
+          )}
         </div>
       </header>
 
       <main className="w-[80%] justify-center items-center flex flex-col m-2.5">
         <section className="relative flex flex-col items-center">
-  <h2 className="text-4xl sm:text-5xl font-bold py-1.5 mb-6 font-cormorant">
-    Catálogo
-  </h2>
+          <h2 className="text-4xl sm:text-5xl font-bold py-1.5 mb-6 font-cormorant">
+            Catálogo
+          </h2>
 
-  
-  <div className="relative flex items-center justify-center w-full">
+          <div className="relative flex items-center justify-center w-full">
+            <button
+              onClick={prev}
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white px-4 py-2 rounded-full cursor-pointer z-20"
+            >
+              <i className="bi bi-arrow-left"></i>
+            </button>
+            <div className="flex gap-8 overflow-hidden py-4 relative">
+              {[0, 1, 2].map((i) => {
+                const pos = (index + i) % cortes.length;
 
-    <button
-      onClick={prev}
-      className="absolute left-0 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white px-4 py-2 rounded-full cursor-pointer z-20"
-    >
-      <i className="bi bi-arrow-left"></i>
-    </button> 
-<div className="flex gap-8 overflow-hidden py-4 relative">
-  {[0, 1, 2].map((i) => {
-    const pos = (index + i) % cortes.length;
-
-    return (
-      <img
-  key={pos}
-  src={cortes[pos].caminhoArquivo}
-  alt={cortes[pos].nome}
-  className={`
+                return (
+                  <img
+                    key={pos}
+                    src={cortes[pos].caminhoArquivo}
+                    alt={cortes[pos].nome}
+                    className={`
     w-[300px] h-[300px]
     rounded-xl object-cover
     cursor-pointer
     ${i === 0 ? "opacity-100" : "opacity-0 md:opacity-100"}
   `}
-/>
+                  />
+                );
+              })}
+            </div>
 
-    );
-  })}
-</div>
-
-
-     <button
-      onClick={next}
-      className="absolute right-0.5 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white px-4 py-2 rounded-full cursor-pointer z-20"
-    >
-      <i className="bi bi-arrow-right"></i>
-    </button> 
-
-  </div>
-</section>
-
+            <button
+              onClick={next}
+              className="absolute right-0.5 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black text-white px-4 py-2 rounded-full cursor-pointer z-20"
+            >
+              <i className="bi bi-arrow-right"></i>
+            </button>
+          </div>
+        </section>
       </main>
 
-
-      <section className="w-full flex flex-col items-start px-6 py-14 md:items-center ">
-
-  
-  <h3 className="text-4xl sm:text-5xl font-bold font-cormorant mb-4 text-center">
-    Contatos
+      <section className="w-full flex flex-col items-center px-6 py-16 bg-black">
+  <h3 className="text-4xl sm:text-5xl font-bold font-cormorant mb-10 text-center">
+    Contato
   </h3>
-  <div className="flex flex-col gap-2 mb-8 text-lg sm:text-xl font-playfair items-start ">
-    <h2 className="text-[25px]">Cauã</h2>
 
-      <span>Instagram: <i className="bi bi-instagram text-pink-600 text-3xl"></i> </span> 
-          <span>Whatsapp: 21 99100-5960 <i className="bi bi-whatsapp text-green-500 text-3xl"></i></span> 
-               
-               
-  </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+    {/* Card 1 */}
+    <div className="border border-[#d4af37] rounded-2xl p-6 bg-[#0f0f0f] shadow-lg">
+      <h2 className="text-2xl font-semibold mb-4 text-[#d4af37]">
+        Cauã
+      </h2>
 
-  <div className="flex flex-col gap-2  text-lg sm:text-xl font-playfair  mb-30">
-    <h2 className="text-[25px]">Thiago</h2>
+      <div className="flex flex-col gap-3 text-lg font-playfair">
+        <a
+          href="https://instagram.com/dtcortes73"
+          target="_blank"
+          className="flex items-center gap-3 hover:text-pink-500 transition"
+        >
+          <i className="bi bi-instagram text-2xl"></i>
+          @Dtcortes73
+        </a>
 
-      <span>Instagram: <i className="bi bi-instagram text-pink-600 text-3xl"></i> </span> 
-          <span>Whatsapp:  21 98637-3354 <i className="bi bi-whatsapp text-green-500 text-3xl"></i></span> 
-               
-               
-  </div>
-   
+        <a
+          href="https://wa.me/5521991005960"
+          target="_blank"
+          className="flex items-center gap-3 hover:text-green-500 transition"
+        >
+          <i className="bi bi-whatsapp text-2xl"></i>
+          (21) 99100-5960
+        </a>
+      </div>
+    </div>
 
-  
-  
-<div>
-  
-</div>
- 
-  <div className="flex flex-col items-center w-full max-w-4xl gap-4">
-    <h3 className="text-4xl sm:text-5xl font-bold font-cormorant text-center">
-      Localização
-    </h3>
+    {/* Card 2 */}
+    <div className="border border-[#d4af37] rounded-2xl p-6 bg-[#0f0f0f] shadow-lg">
+      <h2 className="text-2xl font-semibold mb-4 text-[#d4af37]">
+        Thiago
+      </h2>
 
-    <p className="text-xl sm:text-2xl text-center">
-      Av. Chrisóstomo Pimentel de Oliveira, 1100 - Pavuna
-    </p>
+      <div className="flex flex-col gap-3 text-lg font-playfair">
+        <a
+          href="https://instagram.com/thbarbershow"
+          target="_blank"
+          className="flex items-center gap-3 hover:text-pink-500 transition"
+        >
+          <i className="bi bi-instagram text-2xl"></i>
+          @Thbarbershow
+        </a>
 
-    <iframe
-      className="w-full h-[280px] sm:h-[350px] md:h-[420px] rounded-2xl shadow-xl border border-neutral-300"
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d919.4002605799227!2d-43.38998593035901!3d-22.81724236254863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9963f50c501967%3A0x5ed76c35be2d2ca2!2sAv.%20Chris%C3%B3stomo%20Pimentel%20de%20Oliveira%2C%201110%20-%20Pavuna%2C%20Rio%20de%20Janeiro%20-%20RJ%2C%2021645-522!5e0!3m2!1spt-BR!2sbr!4v1764365433913!5m2!1spt-BR!2sbr"
-      allowFullScreen
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-    />
+        <a
+          href="https://wa.me/5521986373354"
+          target="_blank"
+          className="flex items-center gap-3 hover:text-green-500 transition"
+        >
+          <i className="bi bi-whatsapp text-2xl"></i>
+          (21) 98637-3354
+        </a>
+        
+      </div>
+      
+    </div>
+    
   </div>
 </section>
 
-
-      <footer >@TH&Dutra</footer>
+<div className="flex flex-col items-center w-full max-w-4xl gap-4"> <h3 className="text-4xl sm:text-5xl font-bold font-cormorant text-center"> Localização </h3> <p className="text-xl sm:text-2xl text-center"> Av. Chrisóstomo Pimentel de Oliveira, 1100 - Pavuna </p> <iframe className="w-full h-[280px] sm:h-[350px] md:h-[420px] rounded-2xl shadow-xl border border-neutral-300" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d919.4002605799227!2d-43.38998593035901!3d-22.81724236254863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9963f50c501967%3A0x5ed76c35be2d2ca2!2sAv.%20Chris%C3%B3stomo%20Pimentel%20de%20Oliveira%2C%201110%20-%20Pavuna%2C%20Rio%20de%20Janeiro%20-%20RJ%2C%2021645-522!5e0!3m2!1spt-BR!2sbr!4v1764365433913!5m2!1spt-BR!2sbr" allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" /> </div>
+      <footer>@TH&Dutra</footer>
     </div>
   );
 }

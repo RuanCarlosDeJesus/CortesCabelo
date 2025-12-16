@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { db } from "../services/firebaseConnect";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
@@ -10,7 +10,6 @@ type Props = {
 export default function ModalRegister({ close, onSave }: Props) {
   const [nome, setNome] = useState("");
   const [tel, setTel] = useState("");
-  const [barbeiro, setBarbeiro] = useState<"caua" | "Thiago" | "">("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const nomeRef = useRef<HTMLInputElement | null>(null);
@@ -24,13 +23,7 @@ export default function ModalRegister({ close, onSave }: Props) {
   }
 
   function canSubmit() {
-    return (
-      nome.trim().length > 0 &&
-      tel.trim().length > 0 &&
-      barbeiro !== "" &&
-      validatePhone(tel) &&
-      !loading
-    );
+    return nome.trim().length > 0 && tel.trim().length > 0 && validatePhone(tel) && !loading;
   }
 
   async function handleConfirm() {
@@ -43,17 +36,18 @@ export default function ModalRegister({ close, onSave }: Props) {
     setLoading(true);
 
     try {
-      await addDoc(collection(db, "profissionais", barbeiro, "fila"), {
+      
+      await addDoc(collection(db, "fila"), {
         nome: nome.trim(),
         phone: tel.trim(),
         criadoEm: serverTimestamp(),
+        ordem: 9999, 
       });
 
       onSave();
       close();
       setNome("");
       setTel("");
-      setBarbeiro("");
     } catch {
       setError("Erro ao salvar cliente.");
     } finally {
@@ -72,27 +66,6 @@ export default function ModalRegister({ close, onSave }: Props) {
           Registrar Cliente
         </h2>
 
-        <div className="flex gap-4 justify-center">
-          {(["caua", "Thiago"] as const).map(b => (
-            <label
-              key={b}
-              className={`w-24 h-24 flex items-center justify-center rounded-xl border cursor-pointer transition ${
-                barbeiro === b
-                  ? "bg-yellow-500 text-black scale-105"
-                  : "border-yellow-500 text-white hover:bg-yellow-500/10"
-              }`}
-            >
-              {b === "caua" ? "Cauã" : "Thiago"}
-              <input
-                type="radio"
-                className="hidden"
-                checked={barbeiro === b}
-                onChange={() => setBarbeiro(b)}
-              />
-            </label>
-          ))}
-        </div>
-
         <input
           ref={nomeRef}
           value={nome}
@@ -108,9 +81,7 @@ export default function ModalRegister({ close, onSave }: Props) {
           className="h-12 rounded-xl px-3 bg-black border border-yellow-500 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
 
-        {error && (
-          <div className="text-red-400 text-sm text-center">{error}</div>
-        )}
+        {error && <div className="text-red-400 text-sm text-center">{error}</div>}
 
         <button
           onClick={handleConfirm}
