@@ -29,7 +29,7 @@ export function Home() {
 
   const queueSize = 12;
 
-  // 🔹 Listener da fila
+
   useEffect(() => {
     const q = query(collection(db, "fila"), orderBy("ordem", "asc"));
     const unsub = onSnapshot(q, snap => {
@@ -43,7 +43,7 @@ export function Home() {
     return unsub;
   }, []);
 
-  // 🔹 Listener do status da barbearia
+
   useEffect(() => {
     const ref = doc(db, "config", "status");
 
