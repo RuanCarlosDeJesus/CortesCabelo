@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import { db } from "../services/firebaseConnect";
 import {
@@ -10,10 +8,11 @@ import {
   orderBy,
   query,
   updateDoc,
+  getDoc,
+  setDoc,
 } from "firebase/firestore";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import ModalRegister from "../components/modaRegister";
-
 
 type Cliente = {
   id: string;
@@ -26,27 +25,55 @@ type Cliente = {
 export function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [aberta, setAberta] = useState<boolean>(true);
+
   const queueSize = 12;
 
+  // 🔹 Listener da fila
   useEffect(() => {
     const q = query(collection(db, "fila"), orderBy("ordem", "asc"));
-
     const unsub = onSnapshot(q, snap => {
       const lista: Cliente[] = snap.docs.map(d => ({
         id: d.id,
         ...(d.data() as Omit<Cliente, "id">),
       }));
-
       setClientes(lista);
     });
 
     return unsub;
   }, []);
 
+  // 🔹 Listener do status da barbearia
+  useEffect(() => {
+    const ref = doc(db, "config", "status");
+
+    const unsub = onSnapshot(ref, snap => {
+      if (snap.exists()) {
+        setAberta(snap.data().aberta);
+      }
+    });
+
+    return unsub;
+  }, []);
+
+  async function toggleBarbearia() {
+    const ref = doc(db, "config", "status");
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      await setDoc(ref, { aberta: true });
+      setAberta(true);
+      return;
+    }
+
+    await updateDoc(ref, {
+      aberta: !aberta,
+    });
+  }
+
   async function handleDelete(index: number) {
     const cliente = clientes[index];
     if (!cliente) return;
-
     await deleteDoc(doc(db, "fila", cliente.id));
   }
 
@@ -59,21 +86,26 @@ export function Home() {
 
     setClientes(items);
 
-   
     await Promise.all(
       items.map((c, index) =>
-        updateDoc(doc(db, "fila", c.id), {
-          ordem: index + 1,
-        })
+        updateDoc(doc(db, "fila", c.id), { ordem: index + 1 })
       )
     );
   }
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white p-6 flex flex-col items-center">
-      
-      <header className="flex gap-6 md:gap-10 mt-5 border-amber-300 border p-4 md:p-5 rounded-xl w-full md:w-[10%] items-center justify-center font-bold text-base sm:text-lg md:text-2xl">
-        <h1> Área de Edição do Admin!</h1>
+      <header className="mt-6 flex flex-col items-center gap-4">
+        <h1 className="text-2xl font-bold">Área de Edição do Admin</h1>
+
+        <button
+          onClick={toggleBarbearia}
+          className={`px-6 py-2 rounded-xl font-bold transition cursor-pointer ${
+            aberta ? "bg-green-600" : "bg-red-600"
+          }`}
+        >
+          {aberta ? "Barbearia Aberta" : "Barbearia Fechada"}
+        </button>
       </header>
 
       <h2 className="text-3xl font-semibold my-6">Fila Única (Admin)</h2>
@@ -109,11 +141,7 @@ export function Home() {
                     }
 
                     return (
-                      <Draggable
-                        draggableId={cliente.id}
-                        index={i}
-                        key={cliente.id}
-                      >
+                      <Draggable draggableId={cliente.id} index={i} key={cliente.id}>
                         {provided => (
                           <tr
                             ref={provided.innerRef}
