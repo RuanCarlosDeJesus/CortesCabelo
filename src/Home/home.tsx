@@ -27,8 +27,7 @@ export function Home() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [aberta, setAberta] = useState<boolean>(true);
 
-  const queueSize = 12;
-
+  const MAX_FILA = 100;
 
   useEffect(() => {
     const q = query(collection(db, "fila"), orderBy("ordem", "asc"));
@@ -37,16 +36,15 @@ export function Home() {
         id: d.id,
         ...(d.data() as Omit<Cliente, "id">),
       }));
-      setClientes(lista);
+
+      setClientes(lista.slice(0, MAX_FILA));
     });
 
     return unsub;
   }, []);
 
-
   useEffect(() => {
     const ref = doc(db, "config", "status");
-
     const unsub = onSnapshot(ref, snap => {
       if (snap.exists()) {
         setAberta(snap.data().aberta);
@@ -66,15 +64,27 @@ export function Home() {
       return;
     }
 
-    await updateDoc(ref, {
-      aberta: !aberta,
-    });
+    await updateDoc(ref, { aberta: !aberta });
   }
 
   async function handleDelete(index: number) {
     const cliente = clientes[index];
     if (!cliente) return;
+
     await deleteDoc(doc(db, "fila", cliente.id));
+
+    const novaLista = clientes
+      .filter((_, i) => i !== index)
+      .map((c, i) => ({
+        ...c,
+        ordem: i + 1,
+      }));
+
+    await Promise.all(
+      novaLista.map(c =>
+        updateDoc(doc(db, "fila", c.id), { ordem: c.ordem })
+      )
+    );
   }
 
   async function onDragEnd(result: any) {
@@ -100,7 +110,7 @@ export function Home() {
 
         <button
           onClick={toggleBarbearia}
-          className={`px-6 py-2 rounded-xl font-bold transition cursor-pointer ${
+          className={`px-6 py-2 rounded-xl font-bold ${
             aberta ? "bg-green-600" : "bg-red-600"
           }`}
         >
@@ -111,37 +121,33 @@ export function Home() {
       <h2 className="text-3xl font-semibold my-6">Fila Única (Admin)</h2>
 
       <main className="w-full max-w-3xl bg-white/10 p-6 rounded-xl">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="fila">
-            {provided => (
-              <table
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="w-full"
-              >
-                <thead>
-                  <tr>
-                    <th className="text-left p-3">Ordem</th>
-                    <th className="text-left p-3">Cliente</th>
-                    <th className="p-3">Remover</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.from({ length: queueSize }).map((_, i) => {
-                    const cliente = clientes[i];
-
-                    if (!cliente) {
-                      return (
-                        <tr key={i}>
-                          <td className="p-3 text-yellow-400">{i + 1}</td>
-                          <td className="p-3 text-green-400">Disponível</td>
-                          <td className="p-3"></td>
-                        </tr>
-                      );
-                    }
-
-                    return (
-                      <Draggable draggableId={cliente.id} index={i} key={cliente.id}>
+        {clientes.length === 0 ? (
+          <div className="text-center text-gray-400 py-6">
+            Nenhum cliente na fila
+          </div>
+        ) : (
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="fila">
+              {provided => (
+                <table
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="w-full"
+                >
+                  <thead>
+                    <tr>
+                      <th className="text-left p-3">Ordem</th>
+                      <th className="text-left p-3">Cliente</th>
+                      <th className="p-3">Remover</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {clientes.map((cliente, i) => (
+                      <Draggable
+                        draggableId={cliente.id}
+                        index={i}
+                        key={cliente.id}
+                      >
                         {provided => (
                           <tr
                             ref={provided.innerRef}
@@ -155,7 +161,7 @@ export function Home() {
                             <td className="p-3">
                               <button
                                 onClick={() => handleDelete(i)}
-                                className="bg-red-600 px-3 py-1 rounded"
+                                className="bg-red-600 px-3 py-1 rounded cursor-pointer"
                               >
                                 Remover
                               </button>
@@ -163,19 +169,19 @@ export function Home() {
                           </tr>
                         )}
                       </Draggable>
-                    );
-                  })}
-                  {provided.placeholder}
-                </tbody>
-              </table>
-            )}
-          </Droppable>
-        </DragDropContext>
+                    ))}
+                    {provided.placeholder}
+                  </tbody>
+                </table>
+              )}
+            </Droppable>
+          </DragDropContext>
+        )}
       </main>
 
       <button
         onClick={() => setModalOpen(true)}
-        className="mt-6 px-6 py-3 rounded-xl bg-blue-500 hover:bg-yellow-600"
+        className="mt-6 px-6 py-3 rounded-xl bg-blue-500 hover:bg-yellow-600 cursor-pointer"
       >
         Adicionar Cliente
       </button>

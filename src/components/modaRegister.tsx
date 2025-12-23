@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { db } from "../services/firebaseConnect";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+} from "firebase/firestore";
 
 type Props = {
   close: () => void;
@@ -23,7 +31,29 @@ export default function ModalRegister({ close, onSave }: Props) {
   }
 
   function canSubmit() {
-    return nome.trim().length > 0 && tel.trim().length > 0 && validatePhone(tel) && !loading;
+    return (
+      nome.trim().length > 0 &&
+      tel.trim().length > 0 &&
+      validatePhone(tel) &&
+      !loading
+    );
+  }
+
+  async function getNextOrder(): Promise<number> {
+    const q = query(
+      collection(db, "fila"),
+      orderBy("ordem", "desc"),
+      limit(1)
+    );
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      return 1;
+    }
+
+    const last = snap.docs[0].data();
+    return (last.ordem ?? 0) + 1;
   }
 
   async function handleConfirm() {
@@ -36,19 +66,20 @@ export default function ModalRegister({ close, onSave }: Props) {
     setLoading(true);
 
     try {
-      
+      const proximaOrdem = await getNextOrder();
+
       await addDoc(collection(db, "fila"), {
         nome: nome.trim(),
         phone: tel.trim(),
         criadoEm: serverTimestamp(),
-        ordem: 9999, 
+        ordem: proximaOrdem,
       });
 
-      onSave();
-      close();
       setNome("");
       setTel("");
-    } catch {
+      onSave();
+      close();
+    } catch (err) {
       setError("Erro ao salvar cliente.");
     } finally {
       setLoading(false);
@@ -81,7 +112,9 @@ export default function ModalRegister({ close, onSave }: Props) {
           className="h-12 rounded-xl px-3 bg-black border border-yellow-500 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
 
-        {error && <div className="text-red-400 text-sm text-center">{error}</div>}
+        {error && (
+          <div className="text-red-400 text-sm text-center">{error}</div>
+        )}
 
         <button
           onClick={handleConfirm}
