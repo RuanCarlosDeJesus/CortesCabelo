@@ -37,6 +37,7 @@ export function App() {
 
   return (
     <div className=" h-screen w-full flex flex-col items-center p-2  text-white">
+      
       <header className="w-[70%] flex flex-col  justify-center items-center py-8 gap-4">
         <a href="/" className="w-full md:w-[50%]">
           <img src={LogoBlack} alt="Logo" className=" " />
@@ -52,6 +53,7 @@ export function App() {
           </p>
 
           <Clientes />
+          
           <button
             onClick={() => setModalOpen(true)}
             className="bg-black text-white border border-[#d4af37] text-xl px-6 py-2 font-playfair rounded-xl font-bold hover:bg-[#d4af37] hover:text-black transition-all duration-300 cursor-pointer"
@@ -69,6 +71,97 @@ export function App() {
       </header>
 
       <main className="w-[80%] justify-center items-center flex flex-col m-2.5">
+        <section className="w-full flex flex-col items-center px-6 py-16 bg-[#111]">
+  <h2 className="text-4xl sm:text-5xl font-bold font-cormorant mb-4">
+    Planos Mensais
+  </h2>
+
+  <p className="text-center text-gray-300 text-lg max-w-2xl mb-12">
+    Economize e mantenha seu visual sempre em dia com nossos planos exclusivos.
+  </p>
+
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-6xl">
+
+    {/* Plano Bronze */}
+    <div className="bg-black border border-[#d4af37] rounded-2xl p-8">
+      <h3 className="text-3xl font-bold text-[#d4af37] mb-4">
+        Bronze
+      </h3>
+
+      <p className="text-5xl font-bold mb-6">
+        R$120
+        <span className="text-lg text-gray-400">/mês</span>
+      </p>
+
+      <ul className="space-y-3 text-lg">
+        <li>✔ 4 cortes no mês</li>
+        <li>✔ Agendamento facilitado</li>
+        <li>✔ Atendimento prioritário</li>
+      </ul>
+
+      <button className="mt-8 w-full py-3 rounded-xl bg-[#d4af37] text-black font-bold">
+        Assinar Plano
+      </button>
+    </div>
+
+    {/* Plano Prata */}
+    <div className="bg-black border-2 border-[#d4af37] rounded-2xl p-8 relative">
+
+      <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#d4af37] text-black px-4 py-1 rounded-full font-bold">
+        Mais escolhido
+      </span>
+
+      <h3 className="text-3xl font-bold text-[#d4af37] mb-4">
+        Prata
+      </h3>
+
+      <p className="text-5xl font-bold mb-6">
+        R$180
+        <span className="text-lg text-gray-400">/mês</span>
+      </p>
+
+      <ul className="space-y-3 text-lg">
+        <li>✔ 4 cortes</li>
+        <li>✔ 4 barbas</li>
+        <li>✔ Agendamento prioritário</li>
+        <li>✔ Desconto em produtos</li>
+      </ul>
+
+      <button className="mt-8 w-full py-3 rounded-xl bg-[#d4af37] text-black font-bold">
+        Assinar Plano
+      </button>
+    </div>
+
+    {/* Plano Gold */}
+    <div className="bg-black border border-[#d4af37] rounded-2xl p-8">
+      <h3 className="text-3xl font-bold text-[#d4af37] mb-4">
+        Gold
+      </h3>
+
+      <p className="text-5xl font-bold mb-6">
+        R$250
+        <span className="text-lg text-gray-400">/mês</span>
+      </p>
+
+      <ul className="space-y-3 text-lg">
+        <li>✔ Cortes ilimitados*</li>
+        <li>✔ Barba ilimitada*</li>
+        <li>✔ Sobrancelha inclusa</li>
+        <li>✔ Toalha quente</li>
+        <li>✔ Atendimento VIP</li>
+      </ul>
+
+      <button className="mt-8 w-full py-3 rounded-xl bg-[#d4af37] text-black font-bold">
+        Assinar Plano
+      </button>
+
+      <p className="text-xs text-gray-500 mt-4">
+        *Conforme disponibilidade da agenda.
+      </p>
+    </div>
+
+  </div>
+</section>
         <section className="relative flex flex-col items-center">
           <h2 className="text-4xl sm:text-5xl font-bold py-1.5 mb-6 font-cormorant">
             Catálogo
